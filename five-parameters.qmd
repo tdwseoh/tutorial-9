@@ -14,4 +14,4 @@ library(primer.data)
 ```
 
 ## **Summary**
-Using data from all deceased governor candidates in the United States from 1945-2012, we seek to predict candidate longevity post-election.
+Using data from all deceased gubernatorial candidates in the United States from 1945-2012, we seek to predict candidate longevity post-election. However, the life expectancies from current day have vastly shifted 1945-2012, concerning the assumption of stability.
