@@ -1,0 +1,15 @@
+---
+title: "Five Parameters"
+author: "Thomas Seoh"
+format: html
+execute: 
+  echo: false
+---
+
+```{r}
+#| label: setup
+#| message: false
+library(tidyverse)
+library(primer.data)
+```
+
