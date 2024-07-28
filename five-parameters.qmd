@@ -11,7 +11,35 @@ execute:
 #| message: false
 library(tidyverse)
 library(primer.data)
+library(brms)
+library(tidybayes)
+library(gtsummary)
+```
+
+```{r}
+ndata <- tibble(sex = c("Male", "Female"), 
+       election_age = 50)
+fit_all |> 
+  add_epred_draws(newdata = ndata) |> 
+  ggplot(aes(.epred, fill = sex)) + 
+  geom_histogram(aes(y = after_stat(count/sum(count))), alpha = 0.5, bins = 100, position = "identity") + 
+  scale_x_continuous(labels = scales::number_format(accuracy = 1)) + 
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) + 
+  labs(title = "Posterior for Expected Years Lived Post-Election", 
+       subtitle = "Male candidates live longer", 
+       x = "Years", 
+       y = "Probability")
 ```
 
 ## **Summary**
-Using data from all deceased gubernatorial candidates in the United States from 1945-2012, we seek to predict candidate longevity post-election. However, the life expectancies from current day have vastly shifted 1945-2012, concerning the assumption of stability.
+Using data from all deceased gubernatorial candidates in the United States from 1945-2012, we seek to predict candidate longevity post-election. However, the life expectancies from current day have vastly shifted 1945-2012, concerning the assumption of stability. Using a Bayesian regression model with the formula "lived_after ~ sex * election_age", we analyzed the data, where "lived_after" is the dependent variable representing post-election life expectancy. The model demonstrates that sex and election age has a positive correlation, indicating that as election age increases, the life expectancy difference between male and female governors tends to widen. A Quantity of Interest for this question is the difference in the number of years that the average male candidate lives after their election and those of an average female candidate. Models can never be accurate, as well as QoI due to the various assumptions of factors.
+
+$$ lived\_after_i =  \beta_0 + \beta_1 male_i + \beta_2 c\_election\_age_i + 
+\\ \beta_3 male_i *  c\_election\_age_i + \epsilon_i $$Temperance uses the Data Generating Mechanism to answer the question with which we began. Humility reminds us that this answer is always a lie.
+
+```{r model, cache=TRUE}
+df1 <- governors |> 
+  select(last_name, year, state, sex, lived_after, election_age)
+
+fit_all <- brm(data = df1, formula = lived_after ~ sex*election_age, silent = 2, refresh = 0, seed = 13)
+```
